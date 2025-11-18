@@ -22,6 +22,9 @@
     margin: 1rem;
     pointer-events: all;
   }
+
+  // Dark mode awareness - smooth transitions
+  transition: opacity 0.3s ease;
 }
 
 // Main AI Card
@@ -37,10 +40,23 @@
     0 20px 60px rgba(0, 0, 0, 0.15),
     0 0 0 1px rgba(255, 255, 255, 0.1) inset;
   pointer-events: all;
+  transition: all 0.3s ease;
 
-  .theme-dark & {
-    background: rgba(30, 30, 35, 0.85);
-    border-color: rgba(255, 255, 255, 0.1);
+  // Dark Mode - Enhanced glassmorphism with better contrast
+  .theme-dark &,
+  .theme-black & {
+    background: rgba(28, 28, 30, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+      0 8px 32px rgba(10, 132, 255, 0.1);
+  }
+
+  // Pure black theme - deeper contrast
+  .theme-black & {
+    background: rgba(0, 0, 0, 0.95);
+    border-color: rgba(255, 255, 255, 0.2);
   }
 
   @media (max-width: @phone) {
@@ -58,6 +74,12 @@
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid rgba(10, 132, 255, 0.15);
+
+  // Dark mode - enhanced border visibility
+  .theme-dark &,
+  .theme-black & {
+    border-bottom-color: rgba(10, 132, 255, 0.25);
+  }
 }
 
 .ai-icon-blob {
@@ -71,6 +93,15 @@
   font-size: 28px;
   box-shadow: 0 8px 16px rgba(10, 132, 255, 0.25);
   animation: float 3s ease-in-out infinite;
+
+  // Dark mode - enhanced glow effect
+  .theme-dark &,
+  .theme-black & {
+    background: linear-gradient(135deg, #0a84ff 0%, #00ccff 100%);
+    box-shadow:
+      0 8px 16px rgba(10, 132, 255, 0.4),
+      0 0 32px rgba(10, 132, 255, 0.2);
+  }
 
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
@@ -126,6 +157,12 @@
   color: var(--color-base-font);
   opacity: 0.5;
   margin-bottom: 0.5rem;
+
+  // Dark mode - better visibility
+  .theme-dark &,
+  .theme-black & {
+    opacity: 0.65;
+  }
 }
 
 // Provider Grid (3x1 cards)
@@ -148,8 +185,15 @@
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 
-  .theme-dark & {
-    background: rgba(50, 50, 55, 0.5);
+  // Dark mode - elevated surface with better contrast
+  .theme-dark &,
+  .theme-black & {
+    background: rgba(44, 44, 46, 0.6);
+    border-color: rgba(10, 132, 255, 0.2);
+  }
+
+  .theme-black & {
+    background: rgba(28, 28, 30, 0.7);
   }
 
   &:hover {
@@ -157,6 +201,14 @@
     border-color: rgba(10, 132, 255, 0.3);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(10, 132, 255, 0.15);
+
+    // Dark mode hover - enhanced glow
+    .theme-dark &,
+    .theme-black & {
+      background: rgba(10, 132, 255, 0.15);
+      border-color: rgba(10, 132, 255, 0.4);
+      box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+    }
   }
 
   &.active {
@@ -164,6 +216,15 @@
     border-color: #0a84ff;
     color: #ffffff;
     box-shadow: 0 8px 20px rgba(10, 132, 255, 0.35);
+
+    // Dark mode active - stronger glow
+    .theme-dark &,
+    .theme-black & {
+      background: linear-gradient(135deg, #0a84ff 0%, #00ccff 100%);
+      box-shadow:
+        0 8px 20px rgba(10, 132, 255, 0.5),
+        0 0 40px rgba(10, 132, 255, 0.25);
+    }
 
     .provider-icon {
       filter: grayscale(0) brightness(1.2);
@@ -204,8 +265,16 @@
     transition: all 0.2s ease;
     box-sizing: border-box;
 
-    .theme-dark & {
-      background: rgba(50, 50, 55, 0.7);
+    // Dark mode - better contrast and visibility
+    .theme-dark &,
+    .theme-black & {
+      background: rgba(44, 44, 46, 0.7);
+      border-color: rgba(10, 132, 255, 0.2);
+      color: #f5f5f7;
+    }
+
+    .theme-black & {
+      background: rgba(28, 28, 30, 0.8);
     }
 
     &:focus {
@@ -214,14 +283,28 @@
       background: rgba(255, 255, 255, 0.9);
       box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.1);
 
-      .theme-dark & {
-        background: rgba(50, 50, 55, 0.9);
+      // Dark mode focus - enhanced glow
+      .theme-dark &,
+      .theme-black & {
+        background: rgba(44, 44, 46, 0.95);
+        border-color: #0a84ff;
+        box-shadow: 0 0 0 4px rgba(10, 132, 255, 0.2);
+      }
+
+      .theme-black & {
+        background: rgba(28, 28, 30, 1);
       }
     }
 
     &::placeholder {
       color: var(--color-base-font);
       opacity: 0.3;
+
+      // Dark mode placeholder - better visibility
+      .theme-dark &,
+      .theme-black & {
+        opacity: 0.4;
+      }
     }
   }
 }
@@ -244,13 +327,27 @@
   cursor: pointer;
   transition: all 0.2s ease;
 
-  .theme-dark & {
-    background: rgba(50, 50, 55, 0.5);
+  // Dark mode - elevated surface
+  .theme-dark &,
+  .theme-black & {
+    background: rgba(44, 44, 46, 0.6);
+    border-color: rgba(10, 132, 255, 0.2);
+  }
+
+  .theme-black & {
+    background: rgba(28, 28, 30, 0.7);
   }
 
   &:hover {
     background: rgba(10, 132, 255, 0.05);
     border-color: rgba(10, 132, 255, 0.25);
+
+    // Dark mode hover - subtle glow
+    .theme-dark &,
+    .theme-black & {
+      background: rgba(10, 132, 255, 0.1);
+      border-color: rgba(10, 132, 255, 0.3);
+    }
   }
 
   input[type="checkbox"] {
@@ -259,6 +356,13 @@
 
   input[type="checkbox"]:checked ~ .toggle-switch {
     background: #0a84ff;
+
+    // Dark mode checked - enhanced visibility
+    .theme-dark &,
+    .theme-black & {
+      background: #0a84ff;
+      box-shadow: 0 0 12px rgba(10, 132, 255, 0.4);
+    }
 
     &::after {
       transform: translateX(20px);
@@ -282,6 +386,12 @@
   align-items: center;
   justify-content: center;
   font-size: 1.125rem;
+
+  // Dark mode - enhanced visibility
+  .theme-dark &,
+  .theme-black & {
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.25) 0%, rgba(10, 132, 255, 0.1) 100%);
+  }
 }
 
 .feature-label {
@@ -300,8 +410,14 @@
   transition: background 0.2s ease;
   flex-shrink: 0;
 
-  .theme-dark & {
+  // Dark mode - better contrast
+  .theme-dark &,
+  .theme-black & {
     background: rgba(120, 120, 128, 0.32);
+  }
+
+  .theme-black & {
+    background: rgba(120, 120, 128, 0.4);
   }
 
   &::after {
@@ -315,6 +431,12 @@
     border-radius: 50%;
     transition: transform 0.2s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+    // Dark mode - enhanced shadow
+    .theme-dark &,
+    .theme-black & {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    }
   }
 }
 
@@ -328,6 +450,13 @@
   border: 1px solid rgba(10, 132, 255, 0.15);
   border-radius: 12px;
   margin-top: 1rem;
+
+  // Dark mode - enhanced visibility
+  .theme-dark &,
+  .theme-black & {
+    background: linear-gradient(135deg, rgba(10, 132, 255, 0.15) 0%, rgba(10, 132, 255, 0.08) 100%);
+    border-color: rgba(10, 132, 255, 0.25);
+  }
 }
 
 .status-indicator {
@@ -370,6 +499,14 @@
   color: #0a84ff;
   margin-left: 0.5rem;
 
+  // Dark mode - enhanced contrast
+  .theme-dark &,
+  .theme-black & {
+    background: rgba(10, 132, 255, 0.15);
+    border-color: rgba(10, 132, 255, 0.3);
+    color: #0a84ff;
+  }
+
   .ai-icon {
     font-size: 0.75rem;
   }
@@ -378,12 +515,24 @@
     background: rgba(48, 209, 88, 0.08);
     border-color: rgba(48, 209, 88, 0.15);
     color: #30d158;
+
+    .theme-dark &,
+    .theme-black & {
+      background: rgba(48, 209, 88, 0.15);
+      border-color: rgba(48, 209, 88, 0.3);
+    }
   }
 
   &[data-score="medium"] {
     background: rgba(255, 214, 10, 0.08);
     border-color: rgba(255, 214, 10, 0.15);
     color: #ffd60a;
+
+    .theme-dark &,
+    .theme-black & {
+      background: rgba(255, 214, 10, 0.15);
+      border-color: rgba(255, 214, 10, 0.3);
+    }
   }
 
   &[data-score="low"] {
@@ -402,11 +551,24 @@
   padding-left: 1rem;
   border-left: 2px solid rgba(10, 132, 255, 0.2);
 
+  // Dark mode - better visibility
+  .theme-dark &,
+  .theme-black & {
+    border-left-color: rgba(10, 132, 255, 0.3);
+    opacity: 0.9;
+  }
+
   &::before {
     content: "AI: ";
     font-weight: 600;
     opacity: 0.6;
     font-style: normal;
     font-size: 0.75rem;
+
+    // Dark mode - enhanced label
+    .theme-dark &,
+    .theme-black & {
+      opacity: 0.75;
+    }
   }
 }
