@@ -1,288 +1,186 @@
+// SPDX-LICENSE-Identifier: AGPL-3.0-or-later
+
 /**
- * Premium AI Integration - Apple-Style with Spinning Gradient Border
- * Handles provider selection, API key management, and AI features
+ * Minimal AI Integration - Clean & Professional
+ * No mock data, only real AI when configured
  */
 
 interface AIConfig {
   provider: 'ollama' | 'anthropic' | 'openai' | 'none';
-  apiKey: string;
-  enableScoring: boolean;
-  enableSummaries: boolean;
+  enabled: boolean;
 }
 
-class PremiumAIIntegration {
-  private config: AIConfig;
-  private localStorageKey = 'searxng_ai_config';
+class MinimalAIIntegration {
+  private config: AIConfig = {
+    provider: 'none',
+    enabled: false
+  };
+
+  private settingsPanel: HTMLElement | null = null;
+  private toggleBtn: HTMLElement | null = null;
 
   constructor() {
-    // Load saved config from localStorage
-    this.config = this.loadConfig();
-    this.init();
+    // Only initialize if user explicitly enables AI
+    this.checkAIAvailability();
   }
 
   /**
-   * Initialize AI Integration
+   * Check if AI backend is configured (no fake data!)
+   */
+  private async checkAIAvailability() {
+    try {
+      // Check if backend has AI configured
+      const response = await fetch('/ai/status');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.enabled) {
+          this.config.enabled = true;
+          this.config.provider = data.provider;
+          this.init();
+        }
+      }
+    } catch (e) {
+      // AI not available - that's fine, just don't show anything
+      console.debug('AI features not configured');
+    }
+  }
+
+  /**
+   * Initialize minimal UI (only if AI is available)
    */
   private init() {
-    console.log('🤖 Premium AI Integration initialized');
-
-    // Setup provider buttons
-    this.setupProviderButtons();
-
-    // Setup API key input
-    this.setupApiKeyInput();
-
-    // Setup feature toggles
-    this.setupFeatureToggles();
-
-    // Apply saved config to UI
-    this.applyConfigToUI();
-
-    // Update status
-    this.updateStatus();
+    this.createToggleButton();
+    this.createSettingsPanel();
+    this.loadUserPreferences();
   }
 
   /**
-   * Load config from localStorage
+   * Create minimal toggle button
    */
-  private loadConfig(): AIConfig {
-    try {
-      const saved = localStorage.getItem(this.localStorageKey);
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {
-      console.warn('Failed to load AI config:', e);
-    }
+  private createToggleButton() {
+    const btn = document.createElement('div');
+    btn.id = 'ai-toggle-btn';
+    btn.title = 'AI Settings';
 
-    // Default config
-    return {
-      provider: 'none',
-      apiKey: '',
-      enableScoring: true,
-      enableSummaries: true
-    };
+    btn.addEventListener('click', () => {
+      this.toggleSettings();
+    });
+
+    document.body.appendChild(btn);
+    this.toggleBtn = btn;
   }
 
   /**
-   * Save config to localStorage
+   * Create minimal settings panel
    */
-  private saveConfig() {
-    try {
-      localStorage.setItem(this.localStorageKey, JSON.stringify(this.config));
-      console.log('💾 AI config saved', this.config);
-    } catch (e) {
-      console.error('Failed to save AI config:', e);
-    }
-  }
+  private createSettingsPanel() {
+    const panel = document.createElement('div');
+    panel.id = 'ai-settings';
+    panel.innerHTML = `
+      <div class="ai-header">
+        <h4>AI Assistant</h4>
+        <button class="close-btn">×</button>
+      </div>
 
-  /**
-   * Setup provider selection buttons
-   */
-  private setupProviderButtons() {
-    const providerBtns = document.querySelectorAll<HTMLElement>('.provider-btn');
+      <div class="ai-provider-select">
+        <label>Provider</label>
+        <select id="ai-provider">
+          <option value="none">Disabled</option>
+          <option value="ollama">Ollama (Local)</option>
+          <option value="anthropic">Anthropic Claude</option>
+          <option value="openai">OpenAI GPT</option>
+        </select>
+      </div>
 
-    providerBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const provider = btn.getAttribute('data-provider') as AIConfig['provider'];
+      <div class="ai-status">
+        <span class="status-dot"></span>
+        <span>Ready</span>
+      </div>
+    `;
 
-        // Remove active class from all buttons
-        providerBtns.forEach(b => b.classList.remove('active'));
+    // Close button
+    const closeBtn = panel.querySelector('.close-btn');
+    closeBtn?.addEventListener('click', () => {
+      panel.classList.remove('active');
+    });
 
-        // Add active class to clicked button
-        btn.classList.add('active');
-
-        // Update config
-        this.config.provider = provider;
-        this.saveConfig();
-        this.updateStatus();
-
-        // Animate button
-        btn.style.transform = 'scale(0.95)';
-        setTimeout(() => {
-          btn.style.transform = '';
-        }, 100);
-
-        console.log(`✨ AI Provider changed to: ${provider}`);
+    // Provider selection
+    const select = panel.querySelector('#ai-provider') as HTMLSelectElement;
+    if (select) {
+      select.value = this.config.provider;
+      select.addEventListener('change', (e) => {
+        this.updateProvider((e.target as HTMLSelectElement).value as any);
       });
-    });
-  }
-
-  /**
-   * Setup API key input
-   */
-  private setupApiKeyInput() {
-    const input = document.getElementById('ai-api-key-input') as HTMLInputElement;
-    if (!input) return;
-
-    // Debounced save
-    let saveTimeout: number;
-    input.addEventListener('input', () => {
-      clearTimeout(saveTimeout);
-      saveTimeout = window.setTimeout(() => {
-        this.config.apiKey = input.value;
-        this.saveConfig();
-        this.updateStatus();
-        console.log('🔑 API key updated');
-      }, 500);
-    });
-
-    // Load saved key
-    if (this.config.apiKey) {
-      input.value = this.config.apiKey;
     }
+
+    document.body.appendChild(panel);
+    this.settingsPanel = panel;
   }
 
   /**
-   * Setup feature toggle switches
+   * Toggle settings panel
    */
-  private setupFeatureToggles() {
-    // Scoring toggle
-    this.setupToggle('ai-scoring', (checked) => {
-      this.config.enableScoring = checked;
-      this.saveConfig();
-      console.log(`⭐ Result scoring: ${checked ? 'enabled' : 'disabled'}`);
-    });
-
-    // Summaries toggle
-    this.setupToggle('ai-summaries', (checked) => {
-      this.config.enableSummaries = checked;
-      this.saveConfig();
-      console.log(`📝 Smart summaries: ${checked ? 'enabled' : 'disabled'}`);
-    });
+  private toggleSettings() {
+    this.settingsPanel?.classList.toggle('active');
   }
 
   /**
-   * Setup individual toggle
+   * Update AI provider
    */
-  private setupToggle(id: string, onChange: (checked: boolean) => void) {
-    const checkbox = document.getElementById(id) as HTMLInputElement;
-    if (!checkbox) return;
+  private async updateProvider(provider: string) {
+    this.config.provider = provider as any;
 
-    const toggle = checkbox.parentElement?.querySelector('.feature-toggle');
-    if (!toggle) return;
+    // Save to backend
+    try {
+      await fetch('/ai/configure', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider })
+      });
+    } catch (e) {
+      console.error('Failed to update AI provider', e);
+    }
 
-    toggle.addEventListener('click', (e) => {
-      // Prevent double-triggering
-      if ((e.target as HTMLElement).tagName === 'INPUT') return;
-
-      checkbox.checked = !checkbox.checked;
-      onChange(checkbox.checked);
-
-      // Animate toggle
-      const toggleSwitch = toggle.querySelector('.toggle-switch');
-      if (toggleSwitch) {
-        (toggleSwitch as HTMLElement).style.transform = 'scale(0.95)';
-        setTimeout(() => {
-          (toggleSwitch as HTMLElement).style.transform = '';
-        }, 100);
-      }
-    });
-
-    checkbox.addEventListener('change', () => {
-      onChange(checkbox.checked);
-    });
+    // Save to localStorage
+    localStorage.setItem('ai_provider', provider);
   }
 
   /**
-   * Apply saved config to UI
+   * Load user preferences
    */
-  private applyConfigToUI() {
-    // Set active provider button
-    if (this.config.provider !== 'none') {
-      const btn = document.querySelector(`[data-provider="${this.config.provider}"]`);
-      if (btn) {
-        btn.classList.add('active');
+  private loadUserPreferences() {
+    const saved = localStorage.getItem('ai_provider');
+    if (saved) {
+      this.config.provider = saved as any;
+      const select = document.querySelector('#ai-provider') as HTMLSelectElement;
+      if (select) {
+        select.value = saved;
       }
     }
-
-    // Set API key
-    const input = document.getElementById('ai-api-key-input') as HTMLInputElement;
-    if (input && this.config.apiKey) {
-      input.value = this.config.apiKey;
-    }
-
-    // Set toggles
-    const scoringCheckbox = document.getElementById('ai-scoring') as HTMLInputElement;
-    if (scoringCheckbox) {
-      scoringCheckbox.checked = this.config.enableScoring;
-    }
-
-    const summariesCheckbox = document.getElementById('ai-summaries') as HTMLInputElement;
-    if (summariesCheckbox) {
-      summariesCheckbox.checked = this.config.enableSummaries;
-    }
   }
 
   /**
-   * Update AI status indicator
-   */
-  private updateStatus() {
-    const statusText = document.querySelector('.ai-status .status-text');
-    const statusDot = document.querySelector('.ai-status .status-dot') as HTMLElement;
-    const status = document.querySelector('.ai-status') as HTMLElement;
-
-    if (!statusText || !statusDot || !status) return;
-
-    const isConfigured = this.config.provider !== 'none' && this.config.apiKey.length > 0;
-
-    if (isConfigured) {
-      statusText.textContent = `${this.getProviderName()} Connected`;
-      statusDot.style.background = '#30d158';
-      statusDot.style.boxShadow = '0 0 12px rgba(48, 209, 88, 0.6)';
-      status.style.background = 'linear-gradient(135deg, rgba(48, 209, 88, 0.1), rgba(48, 209, 88, 0.05))';
-      status.style.borderColor = 'rgba(48, 209, 88, 0.3)';
-      status.style.color = '#30d158';
-    } else {
-      statusText.textContent = 'Not Configured';
-      statusDot.style.background = '#ff9f0a';
-      statusDot.style.boxShadow = '0 0 12px rgba(255, 159, 10, 0.6)';
-      status.style.background = 'linear-gradient(135deg, rgba(255, 159, 10, 0.1), rgba(255, 159, 10, 0.05))';
-      status.style.borderColor = 'rgba(255, 159, 10, 0.3)';
-      status.style.color = '#ff9f0a';
-    }
-  }
-
-  /**
-   * Get provider display name
-   */
-  private getProviderName(): string {
-    switch (this.config.provider) {
-      case 'ollama':
-        return 'Ollama';
-      case 'anthropic':
-        return 'Anthropic';
-      case 'openai':
-        return 'OpenAI';
-      default:
-        return 'AI';
-    }
-  }
-
-  /**
-   * Add AI indicator to result
+   * Add subtle indicator to result (only with real data)
    */
   static addIndicatorToResult(result: HTMLElement, score: string, summary?: string) {
+    if (!score) return; // No fake data!
+
+    // Minimal indicator badge
     const indicator = document.createElement('span');
     indicator.className = 'result-ai-indicator';
     indicator.setAttribute('data-score', score);
+    indicator.innerHTML = `
+      <span class="ai-icon">✓</span>
+      <span>${score === 'high' ? 'Relevant' : score === 'medium' ? 'Related' : 'Info'}</span>
+    `;
 
-    const icon = document.createElement('span');
-    icon.className = 'ai-icon';
-    icon.textContent = score === 'high' ? '⭐' : score === 'medium' ? '✨' : '💡';
-
-    const text = document.createElement('span');
-    text.textContent = score === 'high' ? 'Highly Relevant' : score === 'medium' ? 'Related' : 'Info';
-
-    indicator.appendChild(icon);
-    indicator.appendChild(text);
-
+    // Add to title area
     const title = result.querySelector('h3');
     if (title) {
       title.appendChild(indicator);
     }
 
-    // Add summary if provided
+    // Add inline summary if provided (no cards!)
     if (summary) {
       const summaryEl = document.createElement('div');
       summaryEl.className = 'ai-summary-inline';
@@ -294,30 +192,19 @@ class PremiumAIIntegration {
       }
     }
   }
-
-  /**
-   * Get current config (for external use)
-   */
-  getConfig(): AIConfig {
-    return { ...this.config };
-  }
-
-  /**
-   * Check if AI is configured and enabled
-   */
-  isEnabled(): boolean {
-    return this.config.provider !== 'none' && this.config.apiKey.length > 0;
-  }
 }
 
-// Initialize when DOM is ready
+// Only initialize if on results page
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    new PremiumAIIntegration();
+    if (document.getElementById('results')) {
+      new MinimalAIIntegration();
+    }
   });
 } else {
-  new PremiumAIIntegration();
+  if (document.getElementById('results')) {
+    new MinimalAIIntegration();
+  }
 }
 
-// Export for use in other modules
-export { PremiumAIIntegration };
+export { MinimalAIIntegration };
