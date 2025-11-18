@@ -21,46 +21,47 @@
 .blob-wave {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.6;
+  filter: blur(80px);
+  opacity: 0.9;
   animation: blob-float 20s ease-in-out infinite;
   will-change: transform, border-radius;
+  mix-blend-mode: screen;
 
-  // Multiple blob instances with different colors
+  // Multiple blob instances with different colors - BRIGHTER
   &.blob-1 {
-    width: 400px;
-    height: 400px;
+    width: 600px;
+    height: 600px;
     top: -10%;
     left: -10%;
     background: radial-gradient(circle,
-      rgba(0, 102, 255, 0.4) 0%,
-      rgba(0, 204, 255, 0.2) 50%,
+      rgba(93, 220, 255, 0.8) 0%,
+      rgba(60, 103, 227, 0.4) 50%,
       rgba(0, 102, 255, 0) 100%
     );
     animation-delay: 0s;
   }
 
   &.blob-2 {
-    width: 500px;
-    height: 500px;
+    width: 700px;
+    height: 700px;
     top: 50%;
     right: -15%;
     background: radial-gradient(circle,
-      rgba(139, 92, 246, 0.35) 0%,
-      rgba(236, 72, 153, 0.15) 50%,
+      rgba(139, 92, 246, 0.7) 0%,
+      rgba(236, 72, 153, 0.35) 50%,
       rgba(139, 92, 246, 0) 100%
     );
     animation-delay: -7s;
   }
 
   &.blob-3 {
-    width: 350px;
-    height: 350px;
+    width: 500px;
+    height: 500px;
     bottom: -10%;
     left: 30%;
     background: radial-gradient(circle,
-      rgba(16, 185, 129, 0.3) 0%,
-      rgba(59, 130, 246, 0.15) 50%,
+      rgba(78, 0, 194, 0.6) 0%,
+      rgba(60, 103, 227, 0.3) 50%,
       rgba(16, 185, 129, 0) 100%
     );
     animation-delay: -14s;
