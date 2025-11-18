@@ -80,27 +80,27 @@ class PremiumAIIntegration {
    * Setup provider selection buttons
    */
   private setupProviderButtons() {
-    const providerBtns = document.querySelectorAll<HTMLElement>('.provider-btn');
+    const providerCards = document.querySelectorAll<HTMLElement>('.provider-card');
 
-    providerBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const provider = btn.getAttribute('data-provider') as AIConfig['provider'];
+    providerCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const provider = card.getAttribute('data-provider') as AIConfig['provider'];
 
-        // Remove active class from all buttons
-        providerBtns.forEach(b => b.classList.remove('active'));
+        // Remove active class from all cards
+        providerCards.forEach(c => c.classList.remove('active'));
 
-        // Add active class to clicked button
-        btn.classList.add('active');
+        // Add active class to clicked card
+        card.classList.add('active');
 
         // Update config
         this.config.provider = provider;
         this.saveConfig();
         this.updateStatus();
 
-        // Animate button
-        btn.style.transform = 'scale(0.95)';
+        // Animate card
+        card.style.transform = 'scale(0.98)';
         setTimeout(() => {
-          btn.style.transform = '';
+          card.style.transform = '';
         }, 100);
 
         console.log(`✨ AI Provider changed to: ${provider}`);
@@ -159,18 +159,15 @@ class PremiumAIIntegration {
     const checkbox = document.getElementById(id) as HTMLInputElement;
     if (!checkbox) return;
 
-    const toggle = checkbox.parentElement?.querySelector('.feature-toggle');
-    if (!toggle) return;
+    const featureItem = checkbox.closest('.feature-item');
+    if (!featureItem) return;
 
-    toggle.addEventListener('click', (e) => {
-      // Prevent double-triggering
-      if ((e.target as HTMLElement).tagName === 'INPUT') return;
-
-      checkbox.checked = !checkbox.checked;
+    // The label click will handle the toggle
+    checkbox.addEventListener('change', () => {
       onChange(checkbox.checked);
 
-      // Animate toggle
-      const toggleSwitch = toggle.querySelector('.toggle-switch');
+      // Animate toggle switch
+      const toggleSwitch = featureItem.querySelector('.toggle-switch');
       if (toggleSwitch) {
         (toggleSwitch as HTMLElement).style.transform = 'scale(0.95)';
         setTimeout(() => {
@@ -178,21 +175,17 @@ class PremiumAIIntegration {
         }, 100);
       }
     });
-
-    checkbox.addEventListener('change', () => {
-      onChange(checkbox.checked);
-    });
   }
 
   /**
    * Apply saved config to UI
    */
   private applyConfigToUI() {
-    // Set active provider button
+    // Set active provider card
     if (this.config.provider !== 'none') {
-      const btn = document.querySelector(`[data-provider="${this.config.provider}"]`);
-      if (btn) {
-        btn.classList.add('active');
+      const card = document.querySelector(`.provider-card[data-provider="${this.config.provider}"]`);
+      if (card) {
+        card.classList.add('active');
       }
     }
 
@@ -218,28 +211,26 @@ class PremiumAIIntegration {
    * Update AI status indicator
    */
   private updateStatus() {
-    const statusText = document.querySelector('.ai-status .status-text');
-    const statusDot = document.querySelector('.ai-status .status-dot') as HTMLElement;
-    const status = document.querySelector('.ai-status') as HTMLElement;
+    const statusText = document.querySelector('.ai-status-bar .status-text');
+    const statusIndicator = document.querySelector('.ai-status-bar .status-indicator') as HTMLElement;
+    const statusDetails = document.querySelector('.ai-status-bar .status-details');
 
-    if (!statusText || !statusDot || !status) return;
+    if (!statusText || !statusIndicator || !statusDetails) return;
 
     const isConfigured = this.config.provider !== 'none' && this.config.apiKey.length > 0;
 
     if (isConfigured) {
       statusText.textContent = `${this.getProviderName()} Connected`;
-      statusDot.style.background = '#30d158';
-      statusDot.style.boxShadow = '0 0 12px rgba(48, 209, 88, 0.6)';
-      status.style.background = 'linear-gradient(135deg, rgba(48, 209, 88, 0.1), rgba(48, 209, 88, 0.05))';
-      status.style.borderColor = 'rgba(48, 209, 88, 0.3)';
-      status.style.color = '#30d158';
+      statusDetails.textContent = 'AI features active';
+      statusIndicator.style.background = 'linear-gradient(135deg, #30d158, #28a745)';
+      statusIndicator.style.boxShadow = '0 0 16px rgba(48, 209, 88, 0.6), 0 0 4px rgba(48, 209, 88, 0.8)';
+      (statusText as HTMLElement).style.color = '#30d158';
     } else {
       statusText.textContent = 'Not Configured';
-      statusDot.style.background = '#ff9f0a';
-      statusDot.style.boxShadow = '0 0 12px rgba(255, 159, 10, 0.6)';
-      status.style.background = 'linear-gradient(135deg, rgba(255, 159, 10, 0.1), rgba(255, 159, 10, 0.05))';
-      status.style.borderColor = 'rgba(255, 159, 10, 0.3)';
-      status.style.color = '#ff9f0a';
+      statusDetails.textContent = 'Configure provider to enable';
+      statusIndicator.style.background = 'linear-gradient(135deg, #ff9f0a, #ff8c00)';
+      statusIndicator.style.boxShadow = '0 0 16px rgba(255, 159, 10, 0.6), 0 0 4px rgba(255, 159, 10, 0.8)';
+      (statusText as HTMLElement).style.color = '#ff9f0a';
     }
   }
 
