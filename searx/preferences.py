@@ -492,6 +492,46 @@ class Preferences:
                 settings['ui']['url_formatting'],
                 choices=['pretty', 'full', 'host']
             ),
+            # AI Integration Settings
+            'ai_provider': EnumStringSetting(
+                'none',
+                locked=is_locked('ai_provider'),
+                choices=['none', 'ollama', 'anthropic', 'openai']
+            ),
+            'ollama_url': StringSetting(
+                'http://localhost:11434',
+                locked=is_locked('ollama_url')
+            ),
+            'ollama_model': StringSetting(
+                'llama3.2',
+                locked=is_locked('ollama_model')
+            ),
+            'anthropic_api_key': StringSetting(
+                '',
+                locked=is_locked('anthropic_api_key')
+            ),
+            'anthropic_model': EnumStringSetting(
+                'claude-3-5-sonnet-20241022',
+                locked=is_locked('anthropic_model'),
+                choices=['claude-3-5-sonnet-20241022', 'claude-3-opus-20240229', 'claude-3-sonnet-20240229', 'claude-3-haiku-20240307']
+            ),
+            'openai_api_key': StringSetting(
+                '',
+                locked=is_locked('openai_api_key')
+            ),
+            'openai_model': EnumStringSetting(
+                'gpt-4o',
+                locked=is_locked('openai_model'),
+                choices=['gpt-4o', 'gpt-4-turbo', 'gpt-4', 'gpt-3.5-turbo']
+            ),
+            'ai_scoring': BooleanSetting(
+                False,
+                locked=is_locked('ai_scoring')
+            ),
+            'ai_summaries': BooleanSetting(
+                False,
+                locked=is_locked('ai_summaries')
+            ),
             # fmt: on
         }
 

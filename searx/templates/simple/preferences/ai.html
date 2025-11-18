@@ -1,0 +1,204 @@
+<fieldset>{{- '' -}}
+  <legend id="pref_ai_provider">{{- _('AI Provider') -}}</legend>{{- '' -}}
+  <div class="value">{{- '' -}}
+    <select name="ai_provider" id="ai_provider" aria-labelledby="pref_ai_provider">
+      <option value="none" {% if preferences.get_value('ai_provider') == 'none' or not preferences.get_value('ai_provider') %}selected="selected"{% endif %}>
+        {{- _('Disabled') -}}
+      </option>
+      <option value="ollama" {% if preferences.get_value('ai_provider') == 'ollama' %}selected="selected"{% endif %}>
+        🦙 {{- _('Ollama') -}}
+      </option>
+      <option value="anthropic" {% if preferences.get_value('ai_provider') == 'anthropic' %}selected="selected"{% endif %}>
+        🔮 {{- _('Anthropic') -}}
+      </option>
+      <option value="openai" {% if preferences.get_value('ai_provider') == 'openai' %}selected="selected"{% endif %}>
+        ✨ {{- _('OpenAI') -}}
+      </option>
+    </select>{{- '' -}}
+  </div>{{- '' -}}
+  <div class="description">
+    {{- _('Select the AI provider for enhanced search results') -}}
+  </div>{{- '' -}}
+</fieldset>{{- '' -}}
+
+{# Ollama Settings #}
+<div id="ai_ollama_settings" class="ai-provider-settings" style="display: {% if preferences.get_value('ai_provider') == 'ollama' %}block{% else %}none{% endif %};">
+  <fieldset>{{- '' -}}
+    <legend id="pref_ollama_url">{{- _('Ollama URL') -}}</legend>{{- '' -}}
+    <div class="value">{{- '' -}}
+      <input type="text" 
+             name="ollama_url" 
+             id="ollama_url"
+             value="{% if preferences.get_value('ollama_url') %}{{ preferences.get_value('ollama_url') }}{% else %}http://localhost:11434{% endif %}"
+             placeholder="http://localhost:11434"
+             aria-labelledby="pref_ollama_url">{{- '' -}}
+    </div>{{- '' -}}
+    <div class="description" id="pref_ollama_url_desc">
+      {{- _('URL of your Ollama instance (default: http://localhost:11434)') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+
+  <fieldset>{{- '' -}}
+    <legend id="pref_ollama_model">{{- _('Ollama Model') -}}</legend>{{- '' -}}
+    <div class="value">{{- '' -}}
+      <input type="text" 
+             name="ollama_model" 
+             id="ollama_model"
+             value="{% if preferences.get_value('ollama_model') %}{{ preferences.get_value('ollama_model') }}{% else %}llama3.2{% endif %}"
+             placeholder="llama3.2"
+             aria-labelledby="pref_ollama_model">{{- '' -}}
+    </div>{{- '' -}}
+    <div class="description" id="pref_ollama_model_desc">
+      {{- _('Model name to use (e.g., llama3.2, mistral, codellama)') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+</div>{{- '' -}}
+
+{# Anthropic Settings #}
+<div id="ai_anthropic_settings" class="ai-provider-settings" style="display: {% if preferences.get_value('ai_provider') == 'anthropic' %}block{% else %}none{% endif %};">
+  <fieldset>{{- '' -}}
+    <legend id="pref_anthropic_key">{{- _('Anthropic API Key') -}}</legend>{{- '' -}}
+    <div class="value">{{- '' -}}
+      <input type="password" 
+             name="anthropic_api_key" 
+             id="anthropic_api_key"
+             value="{{ preferences.get_value('anthropic_api_key') or '' }}"
+             placeholder="sk-ant-..."
+             aria-labelledby="pref_anthropic_key">{{- '' -}}
+    </div>{{- '' -}}
+    <div class="description" id="pref_anthropic_key_desc">
+      {{- _('Your Anthropic API key from https://console.anthropic.com/') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+
+  <fieldset>{{- '' -}}
+    <legend id="pref_anthropic_model">{{- _('Anthropic Model') -}}</legend>{{- '' -}}
+    <div class="value">{{- '' -}}
+      <select name="anthropic_model" id="anthropic_model" aria-labelledby="pref_anthropic_model">
+        <option value="claude-3-5-sonnet-20241022" {% if preferences.get_value('anthropic_model') == 'claude-3-5-sonnet-20241022' or not preferences.get_value('anthropic_model') %}selected="selected"{% endif %}>
+          Claude 3.5 Sonnet
+        </option>
+        <option value="claude-3-opus-20240229" {% if preferences.get_value('anthropic_model') == 'claude-3-opus-20240229' %}selected="selected"{% endif %}>
+          Claude 3 Opus
+        </option>
+        <option value="claude-3-sonnet-20240229" {% if preferences.get_value('anthropic_model') == 'claude-3-sonnet-20240229' %}selected="selected"{% endif %}>
+          Claude 3 Sonnet
+        </option>
+        <option value="claude-3-haiku-20240307" {% if preferences.get_value('anthropic_model') == 'claude-3-haiku-20240307' %}selected="selected"{% endif %}>
+          Claude 3 Haiku
+        </option>
+      </select>{{- '' -}}
+    </div>{{- '' -}}
+    <div class="description" id="pref_anthropic_model_desc">
+      {{- _('Select the Anthropic model to use') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+</div>{{- '' -}}
+
+{# OpenAI Settings #}
+<div id="ai_openai_settings" class="ai-provider-settings" style="display: {% if preferences.get_value('ai_provider') == 'openai' %}block{% else %}none{% endif %};">
+  <fieldset>{{- '' -}}
+    <legend id="pref_openai_key">{{- _('OpenAI API Key') -}}</legend>{{- '' -}}
+    <div class="value">{{- '' -}}
+      <input type="password" 
+             name="openai_api_key" 
+             id="openai_api_key"
+             value="{{ preferences.get_value('openai_api_key') or '' }}"
+             placeholder="sk-..."
+             aria-labelledby="pref_openai_key">{{- '' -}}
+    </div>{{- '' -}}
+    <div class="description" id="pref_openai_key_desc">
+      {{- _('Your OpenAI API key from https://platform.openai.com/api-keys') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+
+  <fieldset>{{- '' -}}
+    <legend id="pref_openai_model">{{- _('OpenAI Model') -}}</legend>{{- '' -}}
+    <div class="value">{{- '' -}}
+      <select name="openai_model" id="openai_model" aria-labelledby="pref_openai_model">
+        <option value="gpt-4o" {% if preferences.get_value('openai_model') == 'gpt-4o' or not preferences.get_value('openai_model') %}selected="selected"{% endif %}>
+          GPT-4o
+        </option>
+        <option value="gpt-4-turbo" {% if preferences.get_value('openai_model') == 'gpt-4-turbo' %}selected="selected"{% endif %}>
+          GPT-4 Turbo
+        </option>
+        <option value="gpt-4" {% if preferences.get_value('openai_model') == 'gpt-4' %}selected="selected"{% endif %}>
+          GPT-4
+        </option>
+        <option value="gpt-3.5-turbo" {% if preferences.get_value('openai_model') == 'gpt-3.5-turbo' %}selected="selected"{% endif %}>
+          GPT-3.5 Turbo
+        </option>
+      </select>{{- '' -}}
+    </div>{{- '' -}}
+    <div class="description" id="pref_openai_model_desc">
+      {{- _('Select the OpenAI model to use') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+</div>{{- '' -}}
+
+{# AI Features #}
+<fieldset>{{- '' -}}
+  <legend>{{ _('AI Features') }}</legend>{{- '' -}}
+  
+  <fieldset>{{- '' -}}
+    <legend id="pref_ai_scoring">{{ _('Result Scoring') }}</legend>{{- '' -}}
+    <p class="value">{{- '' -}}
+      <input type="checkbox" {{- ' ' -}}
+             name="ai_scoring" {{- ' ' -}}
+             value="on" {{- ' ' -}}
+             aria-labelledby="pref_ai_scoring" {{- ' ' -}}
+             class="checkbox-onoff" {{- ' ' -}}
+             {%- if preferences.get_value('ai_scoring') -%}
+               checked
+             {%- endif -%}{{- ' ' -}}
+             >{{- '' -}}
+    </p>{{- '' -}}
+    <div class="description" id="pref_ai_scoring_desc">
+      {{- _('Enable AI-powered result scoring to improve search relevance') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+
+  <fieldset>{{- '' -}}
+    <legend id="pref_ai_summaries">{{ _('Smart Summaries') }}</legend>{{- '' -}}
+    <p class="value">{{- '' -}}
+      <input type="checkbox" {{- ' ' -}}
+             name="ai_summaries" {{- ' ' -}}
+             value="on" {{- ' ' -}}
+             aria-labelledby="pref_ai_summaries" {{- ' ' -}}
+             class="checkbox-onoff" {{- ' ' -}}
+             {%- if preferences.get_value('ai_summaries') -%}
+               checked
+             {%- endif -%}{{- ' ' -}}
+             >{{- '' -}}
+    </p>{{- '' -}}
+    <div class="description" id="pref_ai_summaries_desc">
+      {{- _('Enable AI-generated summaries for search results') -}}
+    </div>{{- '' -}}
+  </fieldset>{{- '' -}}
+</fieldset>{{- '' -}}
+
+<script>
+(function() {
+  const providerSelect = document.getElementById('ai_provider');
+  if (!providerSelect) return;
+  
+  function toggleProviderSettings() {
+    const value = providerSelect.value;
+    document.querySelectorAll('.ai-provider-settings').forEach(el => {
+      el.style.display = 'none';
+    });
+    
+    if (value === 'ollama') {
+      document.getElementById('ai_ollama_settings').style.display = 'block';
+    } else if (value === 'anthropic') {
+      document.getElementById('ai_anthropic_settings').style.display = 'block';
+    } else if (value === 'openai') {
+      document.getElementById('ai_openai_settings').style.display = 'block';
+    }
+  }
+  
+  providerSelect.addEventListener('change', toggleProviderSettings);
+  toggleProviderSettings();
+})();
+</script>
+
