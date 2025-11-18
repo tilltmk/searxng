@@ -699,6 +699,123 @@ def search():
     if search_query.redirect_to_first_result and results:
         return redirect(results[0]['url'], 302)
 
+    # Apply AI enhancements if enabled
+    if output_format == 'html':
+        try:
+            from searx.ai_integration import enhance_results_with_ai
+            
+            ai_provider = sxng_request.preferences.get_value('ai_provider') or 'none'
+            ai_scoring = sxng_request.preferences.get_value('ai_scoring') or False
+            ai_summaries = sxng_request.preferences.get_value('ai_summaries') or False
+            
+            if ai_provider != 'none' and (ai_scoring or ai_summaries):
+                # Convert Result objects to dicts for AI enhancement
+                results_dicts = []
+                for result in results:
+                    if hasattr(result, 'as_dict'):
+                        result_dict = result.as_dict()
+                    else:
+                        # Convert result object to dict
+                        result_dict = {}
+                        for key in dir(result):
+                            if not key.startswith('_') and not callable(getattr(result, key, None)):
+                                try:
+                                    value = getattr(result, key, None)
+                                    if value is not None:
+                                        result_dict[key] = value
+                                except:
+                                    pass
+                        # Also try to access as dict
+                        try:
+                            if hasattr(result, '__getitem__'):
+                                for key in ['title', 'content', 'url', 'template', 'category']:
+                                    try:
+                                        result_dict[key] = result[key]
+                                    except:
+                                        pass
+                        except:
+                            pass
+                    results_dicts.append(result_dict)
+                
+                # Apply AI enhancements
+                enhanced_dicts = enhance_results_with_ai(
+                    results_dicts,
+                    search_query.query,
+                    ai_provider,
+                    ai_scoring,
+                    ai_summaries,
+                    ollama_url=sxng_request.preferences.get_value('ollama_url') or 'http://localhost:11434',
+                    ollama_model=sxng_request.preferences.get_value('ollama_model') or 'llama3.2',
+                    anthropic_api_key=sxng_request.preferences.get_value('anthropic_api_key') or '',
+                    anthropic_model=sxng_request.preferences.get_value('anthropic_model') or 'claude-3-5-sonnet-20241022',
+                    openai_api_key=sxng_request.preferences.get_value('openai_api_key') or '',
+                    openai_model=sxng_request.preferences.get_value('openai_model') or 'gpt-4o',
+                )
+                
+                # Create wrapper dicts that include AI data and delegate to original result objects
+                # This allows templates to access both result attributes and AI data
+                enhanced_results = []
+                for i, result in enumerate(results):
+                    if i < len(enhanced_dicts):
+                        enhanced = enhanced_dicts[i]
+                        # Create a dict-like wrapper that delegates to the result object
+                        class ResultWrapper:
+                            def __init__(self, result_obj, ai_data):
+                                self._result = result_obj
+                                self._ai_score = ai_data.get('ai_score')
+                                self._ai_summary = ai_data.get('ai_summary')
+                            
+                            def __getitem__(self, key):
+                                if key == 'ai_score':
+                                    return self._ai_score
+                                elif key == 'ai_summary':
+                                    return self._ai_summary
+                                else:
+                                    return self._result[key]
+                            
+                            def __getattr__(self, name):
+                                if name == 'ai_score':
+                                    return self._ai_score
+                                elif name == 'ai_summary':
+                                    return self._ai_summary
+                                else:
+                                    return getattr(self._result, name)
+                            
+                            def get(self, key, default=None):
+                                if key == 'ai_score':
+                                    return self._ai_score if self._ai_score else default
+                                elif key == 'ai_summary':
+                                    return self._ai_summary if self._ai_summary else default
+                                else:
+                                    try:
+                                        return self._result[key]
+                                    except (KeyError, TypeError):
+                                        return getattr(self._result, key, default)
+                            
+                            def __contains__(self, key):
+                                if key in ['ai_score', 'ai_summary']:
+                                    return getattr(self, f'_{key}') is not None
+                                try:
+                                    return key in self._result
+                                except TypeError:
+                                    return hasattr(self._result, key)
+                            
+                            # Delegate all other attributes to the original result
+                            def __iter__(self):
+                                return iter(self._result)
+                            
+                            def __repr__(self):
+                                return repr(self._result)
+                        
+                        wrapper = ResultWrapper(result, enhanced)
+                        enhanced_results.append(wrapper)
+                    else:
+                        enhanced_results.append(result)
+                
+                results = enhanced_results
+        except Exception as e:
+            logger.exception(f"AI enhancement error: {e}", exc_info=True)
+    
     for result in results:
         if output_format == 'html':
             if 'content' in result and result['content']:

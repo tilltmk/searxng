@@ -14,6 +14,17 @@
     {{ _('This site did not provide any description.')|safe }}
   </p>
 {% endif -%}
+{%- set ai_summary = result.get('ai_summary') if result.get('ai_summary') else (result.ai_summary if result.ai_summary is defined else None) %}
+{%- if ai_summary %}
+  <p class="ai-summary-inline">{{ ai_summary }}</p>
+{%- endif %}
+{%- set ai_score = result.get('ai_score') if result.get('ai_score') else (result.ai_score if result.ai_score is defined else None) %}
+{%- if ai_score %}
+  <span class="result-ai-indicator" data-score="{{ ai_score }}">
+    <span class="ai-icon">🤖</span>
+    <span>{{ ai_score|capitalize }} relevance</span>
+  </span>
+{%- endif %}
 {{- result_sub_footer(result) -}}
 {% if result.iframe_src -%}
 <div id="result-media-{{ index }}" class="embedded-content invisible">
