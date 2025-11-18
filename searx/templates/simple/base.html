@@ -35,44 +35,6 @@
     <div class="blob-wave blob-3 liquid-distortion"></div>
   </div>
 
-  <!-- AI Integration - Compact Horizontal Bar -->
-  <div id="ai-panel-container">
-    <div class="ai-panel-compact">
-      <div class="ai-panel-header">
-        <span class="ai-icon">🤖</span>
-        <span class="ai-title">AI Assistant</span>
-        <span class="ai-subtitle">Ollama • Anthropic • OpenAI</span>
-      </div>
-      
-      <div class="ai-panel-content">
-        <div class="ai-providers">
-          <button class="ai-provider-btn" data-provider="ollama" title="Ollama">🦙</button>
-          <button class="ai-provider-btn" data-provider="anthropic" title="Anthropic">🔮</button>
-          <button class="ai-provider-btn" data-provider="openai" title="OpenAI">✨</button>
-        </div>
-        
-        <div class="ai-input-wrapper">
-          <input type="password" id="ai-api-key-input" class="ai-api-input" placeholder="API Key..." autocomplete="off">
-        </div>
-        
-        <div class="ai-features">
-          <label class="ai-feature-toggle">
-            <input type="checkbox" id="ai-scoring" checked>
-            <span class="ai-feature-label">⭐ Scoring</span>
-          </label>
-          <label class="ai-feature-toggle">
-            <input type="checkbox" id="ai-summaries" checked>
-            <span class="ai-feature-label">📝 Summaries</span>
-          </label>
-        </div>
-        
-        <div class="ai-status">
-          <span class="ai-status-dot"></span>
-          <span class="ai-status-text">Ready</span>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <main id="main_{{  self._TemplateReference__context.name|replace("simple/", "")|replace(".html", "") }}" class="{{body_class}}">
     {% if errors %}
