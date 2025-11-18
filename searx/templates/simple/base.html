@@ -35,6 +35,77 @@
     <div class="blob-wave blob-3 liquid-distortion"></div>
   </div>
 
+  <!-- AI Integration Panel with Spinning Gradient Border -->
+  <div id="ai-panel-container">
+    <div class="ai-card">
+      <div class="ai-card-inner">
+        <div class="ai-header">
+          <div class="ai-icon"></div>
+          <div class="ai-title">
+            <h3>AI Assistant</h3>
+            <p>Enhance your search with AI</p>
+          </div>
+        </div>
+
+        <div class="ai-provider-section">
+          <label>Provider</label>
+          <div class="provider-grid">
+            <div class="provider-btn" data-provider="ollama">
+              <span class="provider-icon">🦙</span>
+              <span>Ollama</span>
+            </div>
+            <div class="provider-btn" data-provider="anthropic">
+              <span class="provider-icon">🔮</span>
+              <span>Anthropic</span>
+            </div>
+            <div class="provider-btn" data-provider="openai">
+              <span class="provider-icon">✨</span>
+              <span>OpenAI</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-api-key">
+          <label>API Key</label>
+          <div class="input-wrapper">
+            <input type="password" id="ai-api-key-input" placeholder="sk-..." autocomplete="off">
+          </div>
+        </div>
+
+        <div class="ai-features">
+          <label>Features</label>
+          <div class="feature-toggle">
+            <input type="checkbox" id="ai-scoring" checked>
+            <div class="feature-info">
+              <span class="feature-icon">⭐</span>
+              <div class="feature-text">
+                <div class="feature-name">Result Scoring</div>
+                <div class="feature-desc">AI-powered relevance scoring</div>
+              </div>
+            </div>
+            <div class="toggle-switch"></div>
+          </div>
+          <div class="feature-toggle">
+            <input type="checkbox" id="ai-summaries" checked>
+            <div class="feature-info">
+              <span class="feature-icon">📝</span>
+              <div class="feature-text">
+                <div class="feature-name">Smart Summaries</div>
+                <div class="feature-desc">Instant AI-generated summaries</div>
+              </div>
+            </div>
+            <div class="toggle-switch"></div>
+          </div>
+        </div>
+
+        <div class="ai-status">
+          <div class="status-dot"></div>
+          <div class="status-text">AI Ready</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main id="main_{{  self._TemplateReference__context.name|replace("simple/", "")|replace(".html", "") }}" class="{{body_class}}">
     {% if errors %}
         <div class="dialog-error" role="alert">
